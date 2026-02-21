@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Watermark Studio | プレミアム画像透かしツール</title>
+    <meta name="description" content="画像に高品質なテキスト透かしを簡単に追加。色、不透明度、サイズを自由にカスタマイズできるオンラインツール。">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <header>
+            <h1 class="logo">AI Watermark <span>Studio</span></h1>
+            <p class="subtitle">Premium Image Branding Tool</p>
+        </header>
+
+        <main class="main-content">
+            <section class="controls-panel">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="single">Single</button>
+                    <button class="tab-btn" data-tab="batch">Batch</button>
+                </div>
+
+                <div class="control-group glass" id="singleUpload">
+                    <label for="imageInput" class="upload-label">
+                        <div class="upload-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+                            </svg>
+                        </div>
+                        <span>単一画像をアップロード</span>
+                        <input type="file" id="imageInput" accept="image/*">
+                    </label>
+                </div>
+
+                <div class="control-group glass hidden" id="batchUpload">
+                    <label for="folderInput" class="upload-label">
+                        <div class="upload-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" />
+                            </svg>
+                        </div>
+                        <span>画像フォルダーを選択</span>
+                        <input type="file" id="folderInput" webkitdirectory directory multiple>
+                    </label>
+                    <div class="export-config">
+                        <label for="exportPath">出力先フォルダパス (Python実行用):</label>
+                        <input type="text" id="exportPath" value="/Users/mochipeanut/antigravity/gen_watermark/export">
+                        <p class="note">※ ブラウザ一括処理の場合は、ブラウザの「ダウンロード」フォルダに保存されます。</p>
+                        <button id="copyCommandBtn" class="secondary-btn">Python実行コマンドをコピー</button>
+                    </div>
+                    <div id="batchStatus" class="batch-status hidden">
+                        <p class="status-text">画像を準備中...</p>
+                        <div class="progress-bar">
+                            <div id="progressFill" class="progress-fill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="settings-container glass">
+                    <h3>水透かし設定</h3>
+
+                    <div class="input-field">
+                        <label for="watermarkText">テキスト</label>
+                        <input type="text" id="watermarkText" value="CONFIDENTIAL" placeholder="透かし文字を入力">
+                    </div>
+
+                    <div class="input-field">
+                        <label for="textColor">カラー</label>
+                        <div class="color-picker-wrapper">
+                            <input type="color" id="textColor" value="#ffffff">
+                            <span id="colorHex">#FFFFFF</span>
+                        </div>
+                    </div>
+
+                    <div class="input-field">
+                        <label for="opacity">不透明度 (<span id="opacityValue">0.1</span>)</label>
+                        <input type="range" id="opacity" min="0" max="1" step="0.05" value="0.1">
+                    </div>
+
+                    <div class="input-field">
+                        <label for="fontSize">フォントサイズ (<span id="fontSizeValue">14</span>px)</label>
+                        <input type="range" id="fontSize" min="10" max="200" step="1" value="14">
+                    </div>
+
+                    <div class="input-field">
+                        <label for="rotation">回転 (<span id="rotationValue">-22</span>°)</label>
+                        <input type="range" id="rotation" min="-180" max="180" step="1" value="-22">
+                    </div>
+
+                    <div class="divider"></div>
+                    <h3>配置設定 (グリッド)</h3>
+
+                    <div class="grid-settings">
+                        <div class="input-field">
+                            <label for="gridRows">行数密度 (<span id="rowsValue">10</span>)</label>
+                            <input type="range" id="gridRows" min="1" max="50" step="1" value="10">
+                        </div>
+                        <div class="input-field">
+                            <label for="gridCols">列数密度 (<span id="colsValue">6</span>)</label>
+                            <input type="range" id="gridCols" min="1" max="50" step="1" value="6">
+                        </div>
+                    </div>
+
+                    <button id="downloadBtn" class="primary-btn" disabled>
+                        個別保存
+                    </button>
+                    <button id="batchProcessBtn" class="primary-btn hidden">
+                        一括処理 (Exportへ)
+                    </button>
+                </div>
+            </section>
+
+            <section class="preview-panel">
+                <div class="preview-wrapper glass">
+                    <div id="dropZone" class="drop-zone">
+                        <div class="drop-content">
+                            <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                                <circle cx="8.5" cy="8.5" r="1.5" />
+                                <polyline points="21 15 16 10 5 21" />
+                            </svg>
+                            <p>ここに画像をドラッグ＆ドロップ</p>
+                        </div>
+                        <canvas id="previewCanvas"></canvas>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

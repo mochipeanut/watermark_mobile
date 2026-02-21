@@ -1,0 +1,6 @@
+venv/
+export/
+img/mp_profile.png
+.DS_Store
+__pycache__/
+*.pyc
