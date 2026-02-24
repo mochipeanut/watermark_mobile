@@ -179,7 +179,7 @@ function renderOnCanvas(targetCanvas, img) {
 
     const text = watermarkText.value || '';
     const color = textColor.value;
-    const alpha = opacity.value;
+    const alpha = parseFloat(opacity.value);
     const size = parseInt(fontSize.value);
     const rot = parseInt(rotation.value) * (Math.PI / 180);
     const rows = parseInt(gridRows.value);
@@ -198,8 +198,8 @@ function renderOnCanvas(targetCanvas, img) {
     targetCtx.globalAlpha = alpha;
     targetCtx.textAlign = 'center';
     targetCtx.textBaseline = 'middle';
-    targetCtx.shadowColor = 'rgba(0,0,0,0.3)';
-    targetCtx.shadowBlur = 4; // Reduced from 10 for cleaner look
+    targetCtx.shadowColor = 'transparent'; // Disabled shadow for better thinness perception
+    targetCtx.shadowBlur = 0;
 
     const cellWidth = targetCanvas.width / cols;
     const cellHeight = targetCanvas.height / rows;
