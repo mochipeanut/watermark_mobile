@@ -8,7 +8,7 @@ def get_config_from_html(file_path):
     """
     config = {
         "text": "mochipeanut",
-        "opacity": 0.05,
+        "opacity": 0.03,
         "font_size": 59,
         "rotation": -22,
         "rows": 8,
