@@ -186,7 +186,7 @@ function renderOnCanvas(targetCanvas, img) {
     targetCtx.textAlign = 'center';
     targetCtx.textBaseline = 'middle';
     targetCtx.shadowColor = 'rgba(0,0,0,0.3)';
-    targetCtx.shadowBlur = 10;
+    targetCtx.shadowBlur = 4; // Reduced from 10 for cleaner look
 
     const cellWidth = targetCanvas.width / cols;
     const cellHeight = targetCanvas.height / rows;
@@ -220,6 +220,11 @@ async function processBatch() {
     batchStatus.classList.remove('hidden');
     progressFill.style.width = '0%';
 
+    const galleryContainer = document.getElementById('resultGalleryContainer');
+    const gallery = document.getElementById('resultGallery');
+    gallery.innerHTML = ''; // Clear previous results
+    galleryContainer.classList.remove('hidden');
+
     const offscreenCanvas = document.createElement('canvas');
 
     for (let i = 0; i < batchFiles.length; i++) {
@@ -236,30 +241,35 @@ async function processBatch() {
             reader.readAsDataURL(file);
         });
 
+        // Ensure the latest preview values are applied (fixes color/opacity update issue)
         renderOnCanvas(offscreenCanvas, img);
         const dataUrl = offscreenCanvas.toDataURL('image/jpeg', 0.95);
 
-        // Ensure filename ends with .jpg
+        // Add to Gallery for mobile users (Long-press to save)
+        const resultItem = document.createElement('div');
+        resultItem.classList.add('result-item');
+        const resultImg = document.createElement('img');
+        resultImg.src = dataUrl;
+        resultItem.appendChild(resultImg);
+        gallery.appendChild(resultItem);
+
+        // Auto-download (for desktop experience)
         const originalName = file.name;
         const lastDotIndex = originalName.lastIndexOf('.');
         const baseName = lastDotIndex !== -1 ? originalName.substring(0, lastDotIndex) : originalName;
         const newFilename = `watermarked_${baseName}.jpg`;
 
-        // Use a small timeout to allow UI updates and prevent browser blockage
         await new Promise(r => setTimeout(r, 100));
         downloadImage(dataUrl, newFilename);
 
         const progress = ((i + 1) / batchFiles.length) * 100;
         progressFill.style.width = `${progress}%`;
 
-        await new Promise(r => setTimeout(r, 400)); // Increased delay for security/stability
+        await new Promise(r => setTimeout(r, 400));
     }
 
-    statusText.innerHTML = '完了！<br><b>ブラウザでの一括処理:</b> 「ダウンロード」フォルダを確認してください。<br><b>特定のフォルダに保存したい場合:</b> 下のPythonコマンドを使用してください。';
+    statusText.innerHTML = '完了！<br><b>スマホの方：</b> 下のギャラリー画像を長押しして「写真を保存」してください。<br><b>PCの方：</b> 「ダウンロード」フォルダを確認してください。';
     batchProcessBtn.disabled = false;
-    setTimeout(() => {
-        batchStatus.classList.add('hidden');
-    }, 5000);
 }
 
 function downloadImage(dataUrl, filename) {
