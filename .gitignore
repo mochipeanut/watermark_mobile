@@ -1,6 +1,11 @@
+.venv/
 venv/
 export/
+img/IMG_*.JPG
+img/IMG_*.jpg
 img/mp_profile.png
 .DS_Store
 __pycache__/
-*.pyc
+*.py[cod]
+.gemini/
+.agents/

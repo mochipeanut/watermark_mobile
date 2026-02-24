@@ -15,6 +15,10 @@ const downloadBtn = document.getElementById('downloadBtn');
 const batchProcessBtn = document.getElementById('batchProcessBtn');
 const copyCommandBtn = document.getElementById('copyCommandBtn');
 const exportPathInput = document.getElementById('exportPath');
+const fontFamily = document.getElementById('fontFamily');
+const fontWeight = document.getElementById('fontWeight');
+const letterSpacing = document.getElementById('letterSpacing');
+const staggered = document.getElementById('staggered');
 
 // Status and Tabs
 const tabBtns = document.querySelectorAll('.tab-btn');
@@ -30,6 +34,8 @@ const fontSizeValue = document.getElementById('fontSizeValue');
 const rotationValue = document.getElementById('rotationValue');
 const rowsValue = document.getElementById('rowsValue');
 const colsValue = document.getElementById('colsValue');
+const spacingValue = document.getElementById('spacingValue');
+const weightValue = document.getElementById('weightValue');
 const colorHex = document.getElementById('colorHex');
 
 let originalImage = null;
@@ -63,11 +69,15 @@ function setupEventListeners() {
     imageInput.addEventListener('change', handleImageUpload);
     folderInput.addEventListener('change', handleFolderUpload);
 
-    [watermarkText, textColor, opacity, fontSize, rotation, gridRows, gridCols].forEach(el => {
+    [watermarkText, textColor, opacity, fontSize, rotation, gridRows, gridCols, fontFamily, letterSpacing, fontWeight].forEach(el => {
         el.addEventListener('input', () => {
             updateValueDisplays();
             drawPreview();
         });
+    });
+
+    staggered.addEventListener('change', () => {
+        drawPreview();
     });
 
     copyCommandBtn.addEventListener('click', () => {
@@ -107,6 +117,8 @@ function updateValueDisplays() {
     rotationValue.textContent = rotation.value;
     rowsValue.textContent = gridRows.value;
     colsValue.textContent = gridCols.value;
+    spacingValue.textContent = letterSpacing.value;
+    weightValue.textContent = fontWeight.value;
     colorHex.textContent = textColor.value.toUpperCase();
 }
 
@@ -159,9 +171,16 @@ function renderOnCanvas(targetCanvas, img) {
     const rot = parseInt(rotation.value) * (Math.PI / 180);
     const rows = parseInt(gridRows.value);
     const cols = parseInt(gridCols.value);
+    const family = fontFamily.value;
+    const weight = fontWeight.value;
+    const spacing = letterSpacing.value + 'px';
+    const isStaggered = staggered.checked;
 
     targetCtx.save();
-    targetCtx.font = `800 ${size}px 'Inter', sans-serif`;
+    targetCtx.font = `${weight} ${size}px ${family}`;
+    if ('letterSpacing' in targetCtx) {
+        targetCtx.letterSpacing = spacing;
+    }
     targetCtx.fillStyle = color;
     targetCtx.globalAlpha = alpha;
     targetCtx.textAlign = 'center';
@@ -174,7 +193,11 @@ function renderOnCanvas(targetCanvas, img) {
 
     for (let i = -1; i <= rows + 1; i++) {
         for (let j = -1; j <= cols + 1; j++) {
-            const xOffset = (i % 2 === 0) ? 0 : cellWidth / 2;
+            let xOffset = 0;
+            if (isStaggered) {
+                // Shift every other row horizontally by half cell width
+                xOffset = (Math.abs(i) % 2 === 0) ? 0 : cellWidth * 0.5;
+            }
             const x = (j * cellWidth) + xOffset;
             const y = i * cellHeight;
             targetCtx.save();
@@ -214,11 +237,17 @@ async function processBatch() {
         });
 
         renderOnCanvas(offscreenCanvas, img);
-        const dataUrl = offscreenCanvas.toDataURL('image/png');
+        const dataUrl = offscreenCanvas.toDataURL('image/jpeg', 0.95);
+
+        // Ensure filename ends with .jpg
+        const originalName = file.name;
+        const lastDotIndex = originalName.lastIndexOf('.');
+        const baseName = lastDotIndex !== -1 ? originalName.substring(0, lastDotIndex) : originalName;
+        const newFilename = `watermarked_${baseName}.jpg`;
 
         // Use a small timeout to allow UI updates and prevent browser blockage
         await new Promise(r => setTimeout(r, 100));
-        downloadImage(dataUrl, `watermarked_${file.name}`);
+        downloadImage(dataUrl, newFilename);
 
         const progress = ((i + 1) / batchFiles.length) * 100;
         progressFill.style.width = `${progress}%`;

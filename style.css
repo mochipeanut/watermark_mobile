@@ -243,6 +243,29 @@ header {
     color: var(--text-secondary);
 }
 
+.checkbox-field {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+}
+
+.checkbox-field label {
+    flex: 1;
+    cursor: pointer;
+}
+
+.checkbox-field input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--accent-color);
+    cursor: pointer;
+}
+
 .input-field {
     display: flex;
     flex-direction: column;
@@ -269,6 +292,29 @@ input[type="text"]:focus {
     outline: none;
     border-color: var(--accent-color);
     background: rgba(255, 255, 255, 0.06);
+}
+
+select {
+    background: var(--input-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    padding: 12px;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    outline: none;
+    width: 100%;
+}
+
+select:focus {
+    border-color: var(--accent-color);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+select option {
+    background-color: #1a1a1a;
+    color: white;
 }
 
 .color-picker-wrapper {
@@ -404,4 +450,95 @@ input[type="range"]::-webkit-slider-thumb:hover {
     max-height: 70vh;
     border-radius: 8px;
     display: none;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 600px) {
+    .app-container {
+        padding: 20px 15px;
+        gap: 20px;
+    }
+
+    .logo {
+        font-size: 1.8rem;
+    }
+
+    .subtitle {
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+    }
+
+    .main-content {
+        gap: 20px;
+    }
+
+    .control-group,
+    .settings-container {
+        padding: 15px;
+    }
+
+    .tabs {
+        flex-wrap: wrap;
+    }
+
+    .tab-btn {
+        padding: 8px;
+        font-size: 0.85rem;
+    }
+
+    .settings-container h3 {
+        font-size: 1rem;
+    }
+
+    .input-field label {
+        font-size: 0.8rem;
+    }
+
+    input[type="text"],
+    select {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+
+    .primary-btn {
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+
+    .preview-panel {
+        min-height: 300px;
+    }
+
+    .drop-zone {
+        min-height: 250px;
+    }
+
+    .preview-wrapper {
+        padding: 10px;
+    }
+
+    #previewCanvas {
+        max-height: 60vh;
+    }
+
+    /* Touch targets improvement for mobile */
+    input[type="range"]::-webkit-slider-thumb {
+        width: 22px;
+        height: 22px;
+    }
+
+    .checkbox-field {
+        padding: 12px 15px;
+    }
+}
+
+/* Tablet Optimizations */
+@media (min-width: 601px) and (max-width: 1024px) {
+    .app-container {
+        padding: 30px;
+    }
+
+    .main-content {
+        grid-template-columns: 1fr;
+    }
 }
