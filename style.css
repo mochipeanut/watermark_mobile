@@ -70,14 +70,32 @@ header {
 .main-content {
     display: grid;
     grid-template-columns: 1fr;
-    /* Mobile-first: always stack by default */
+    grid-template-areas:
+        "upload"
+        "preview"
+        "settings";
     gap: 30px;
+}
+
+.upload-section {
+    grid-area: upload;
+}
+
+.preview-panel {
+    grid-area: preview;
+}
+
+.settings-container {
+    grid-area: settings;
 }
 
 @media (min-width: 1025px) {
     .main-content {
         grid-template-columns: 350px 1fr;
-        /* Only side-by-side on large desktop */
+        grid-template-areas:
+            "upload preview"
+            "settings preview";
+        align-items: start;
     }
 }
 
@@ -102,7 +120,7 @@ header {
     box-shadow: var(--glass-shadow);
 }
 
-.controls-panel {
+.upload-section {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -412,9 +430,10 @@ input[type="range"]::-webkit-slider-thumb:hover {
 /* Preview Panel */
 .preview-panel {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
-    min-height: 500px;
+    min-height: 400px;
 }
 
 .preview-wrapper {
@@ -646,7 +665,6 @@ input[type="range"]::-webkit-slider-thumb:hover {
 /* Desktop Optimizations */
 @media (min-width: 1025px) {
     .main-content {
-        grid-template-columns: 350px 1fr;
-        /* Sidebar + main content */
+        gap: 30px;
     }
 }
