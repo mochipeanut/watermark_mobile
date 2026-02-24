@@ -144,6 +144,7 @@ function loadImage(file) {
             originalImage = img;
             canvas.style.display = 'block';
             previewImage.style.display = 'block';
+            dropZone.classList.add('has-image');
             dropContent.style.display = 'none';
             downloadBtn.disabled = false;
             drawPreview();
@@ -278,12 +279,30 @@ async function processBatch() {
 }
 
 function downloadImage(dataUrl, filename) {
-    const link = document.createElement('a');
-    link.download = filename;
-    link.href = dataUrl;
-    document.body.appendChild(link); // Ensure link is in DOM
-    link.click();
-    document.body.removeChild(link);
+    // Detect mobile (iOS/Android)
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile) {
+        // On mobile, opening in a new tab is much more reliable for saving
+        const newTab = window.open();
+        newTab.document.write(`
+            <html>
+                <body style="margin:0; background: #111; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; font-family: sans-serif; color: white;">
+                    <p style="margin-bottom: 20px;">画像を長押しして「"写真"に保存」を選択してください</p>
+                    <img src="${dataUrl}" style="max-width: 95%; max-height: 80vh; border-radius: 10px; box-shadow: 0 5px 30px rgba(0,0,0,0.5);">
+                    <button onclick="window.close()" style="margin-top: 30px; padding: 12px 25px; background: #007aff; border: none; color: white; border-radius: 8px; font-weight: bold;">閉じる</button>
+                </body>
+            </html>
+        `);
+    } else {
+        // Desktop standard download
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
 }
 
 init();
