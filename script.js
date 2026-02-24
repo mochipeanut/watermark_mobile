@@ -8,6 +8,7 @@ const rotation = document.getElementById('rotation');
 const gridRows = document.getElementById('gridRows');
 const gridCols = document.getElementById('gridCols');
 const canvas = document.getElementById('previewCanvas');
+const previewImage = document.getElementById('previewImage');
 const ctx = canvas.getContext('2d');
 const dropZone = document.getElementById('dropZone');
 const dropContent = document.querySelector('.drop-content');
@@ -142,6 +143,7 @@ function loadImage(file) {
         img.onload = () => {
             originalImage = img;
             canvas.style.display = 'block';
+            previewImage.style.display = 'block';
             dropContent.style.display = 'none';
             downloadBtn.disabled = false;
             drawPreview();
@@ -154,6 +156,9 @@ function loadImage(file) {
 function drawPreview() {
     if (!originalImage) return;
     renderOnCanvas(canvas, originalImage);
+
+    // Sync canvas to image for mobile saving
+    previewImage.src = canvas.toDataURL('image/png');
 }
 
 function renderOnCanvas(targetCanvas, img) {

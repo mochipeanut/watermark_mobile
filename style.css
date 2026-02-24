@@ -530,6 +530,36 @@ input[type="range"]::-webkit-slider-thumb:hover {
     .checkbox-field {
         padding: 12px 15px;
     }
+
+    /* Hide Batch tab for mobile users */
+    .tab-btn[data-tab="batch"] {
+        display: none !important;
+    }
+
+    /* Swap canvas for saveable image on mobile */
+    #previewCanvas {
+        display: none !important;
+    }
+
+    #previewImage {
+        display: block !important;
+    }
+}
+
+/* Preview Image for mobile save */
+#previewImage {
+    max-width: 100%;
+    max-height: 70vh;
+    border-radius: 8px;
+    display: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    #previewImage {
+        max-height: 60vh;
+    }
 }
 
 /* Result Gallery Styles */
