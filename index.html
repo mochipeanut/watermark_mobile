@@ -11,7 +11,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Oswald:wght@700&family=Roboto:wght@100;400;700;900&family=Montserrat:wght@100;400;700;900&family=Playfair+Display:wght@400;700;900&family=Outfit:wght@400;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=1.0.1">
+    <link rel="stylesheet" href="style.css?v=1.1.0">
 
     <!-- PWA / Mobile Settings -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -171,15 +171,21 @@
                                 <polyline points="21 15 16 10 5 21" />
                             </svg>
                             <p>ここに画像をドラッグ＆ドロップ</p>
+                            <p class="mobile-only-hint"
+                                style="display:none; font-size: 0.8rem; margin-top: 5px; color: var(--accent-color);">
+                                ※画像をタップして選択できます</p>
                         </div>
                         <canvas id="previewCanvas"></canvas>
-                        <img id="previewImage" alt="Watermark Preview">
+                        <img id="previewImage" alt="Watermark Preview"
+                            style="user-select: auto; -webkit-user-select: auto;">
                     </div>
                 </div>
+                <p id="versionInfo" style="text-align: center; font-size: 0.7rem; color: #444; margin-top: 20px;">System
+                    Version: v1.1.0 (Mobile Fix Applied)</p>
             </section>
         </main>
     </div>
-    <script src="script.js?v=1.0.1"></script>
+    <script src="script.js?v=1.1.0"></script>
 </body>
 
 </html>

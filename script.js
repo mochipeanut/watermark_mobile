@@ -145,6 +145,13 @@ function loadImage(file) {
             canvas.style.display = 'block';
             previewImage.style.display = 'block';
             dropZone.classList.add('has-image');
+
+            // Show mobile hint if relevant
+            const mobileHint = document.querySelector('.mobile-only-hint');
+            if (mobileHint && window.innerWidth <= 600) {
+                mobileHint.style.display = 'block';
+            }
+
             dropContent.style.display = 'none';
             downloadBtn.disabled = false;
             drawPreview();
@@ -283,17 +290,31 @@ function downloadImage(dataUrl, filename) {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
     if (isMobile) {
-        // On mobile, opening in a new tab is much more reliable for saving
-        const newTab = window.open();
-        newTab.document.write(`
-            <html>
-                <body style="margin:0; background: #111; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; font-family: sans-serif; color: white;">
-                    <p style="margin-bottom: 20px;">画像を長押しして「"写真"に保存」を選択してください</p>
-                    <img src="${dataUrl}" style="max-width: 95%; max-height: 80vh; border-radius: 10px; box-shadow: 0 5px 30px rgba(0,0,0,0.5);">
-                    <button onclick="window.close()" style="margin-top: 30px; padding: 12px 25px; background: #007aff; border: none; color: white; border-radius: 8px; font-weight: bold;">閉じる</button>
-                </body>
-            </html>
-        `);
+        // First try: Open in new window
+        try {
+            const newTab = window.open();
+            if (!newTab || newTab.closed || typeof newTab.closed == 'undefined') {
+                // If pop-up is blocked, use location.href as fallback
+                window.location.href = dataUrl;
+            } else {
+                newTab.document.write(`
+                    <html>
+                        <head><title>Save Image</title><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
+                        <body style="margin:0; background: #111; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; font-family: -apple-system, sans-serif; color: white; text-align: center;">
+                            <div style="padding: 20px;">
+                                <p style="margin-bottom: 20px; font-weight: bold;">画像を長押しして「"写真"に保存」を選択してください</p>
+                                <img src="${dataUrl}" style="max-width: 100%; max-height: 70vh; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.6);">
+                                <div style="margin-top: 40px;">
+                                    <button onclick="window.close()" style="padding: 14px 30px; background: #222; border: 1px solid #444; color: white; border-radius: 100px; font-size: 1rem; cursor: pointer;">戻る</button>
+                                </div>
+                            </div>
+                        </body>
+                    </html>
+                `);
+            }
+        } catch (e) {
+            window.location.href = dataUrl;
+        }
     } else {
         // Desktop standard download
         const link = document.createElement('a');
